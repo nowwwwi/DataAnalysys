@@ -1,3 +1,4 @@
+import re
 import time
 import pandas as pd
 import requests
@@ -5,17 +6,23 @@ from bs4 import BeautifulSoup
 from tqdm import tqdm
 
 
-def get_travel_time(route_data: BeautifulSoup):
-    time = route_data.find('li', attrs={'class': 'time'}).text.split('（')[1].split('）')[0]
-    time_split = time.split('時間')
+def get_travel_time(route_data: BeautifulSoup) -> int:
+    t = route_data.find('li', attrs={'class': 'time'}).text
+    match = re.search(r'(\d+)時間(\d+)分', t)
 
-    if len(time_split) == 1:
-        return int(time_split[0].split('分')[0])
-    else:
-        return int(time_split[0]) * 60 + int(time_split[1].split('分')[0])
+    if match:
+        hours, minutes = int(match.group(1)), int(match.group(2))
+        return hours * 60 + minutes
+
+    match = re.search(r'(\d+)分', t)
+
+    if match:
+        return int(match.group(1))
+
+    raise ValueError('Invalid time format')
 
 
-def get_distance(route_data: BeautifulSoup):
+def get_distance(route_data: BeautifulSoup) -> float:
     dist = route_data.find('li', attrs={'class': 'distance'}).text
     return float(dist.replace('km', ''))
 
@@ -32,7 +39,7 @@ def get_transport_info(destination: str):
         'travel_time': get_travel_time(route_data),
         'is_express': "特急" in detail,
         'is_superexpress': "新幹線" in detail,
-        'is_bus': 'bus' in detail or 'highWaybus' in detail,
+        'is_bus': any(x in detail for x in ['bus', 'highWaybus']),
         'is_airplane': "air" in detail
     }
 
@@ -70,6 +77,6 @@ def get_and_save_dataframe():
 
 def drop_unnecessary_columns(df):
     df = df.astype({'is_express': bool, 'is_superexpress': bool, 'is_bus': bool, 'is_airplane': bool})
-    df = df.drop(df.columns[[0,1,2,3,4,5,6,7]], axis=1)
+    df = df.drop(df.columns[[0, 1, 2, 3, 4, 5, 6, 7]], axis=1)
 
     return df

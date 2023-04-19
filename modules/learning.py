@@ -2,13 +2,14 @@ import lightgbm as lgb
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import SGDRegressor
+import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error
 
 
 def lgb_regression(df):
-    df_train, df_test = train_test_split(df, test_size=0.2)
+    df_train, df_test = train_test_split(df, test_size=0.3)
 
-    col = 'distance'
+    col = 'travel_time'
 
     train_y, train_x = df_train[col], df_train.drop(col, axis=1)
     test_y, test_x = df_test[col], df_test.drop(col, axis=1)
@@ -22,11 +23,7 @@ def lgb_regression(df):
         'num_leaves': 31
     }
 
-    return lgb.train(params,
-                      trains,
-                      valid_sets=tests,
-                      num_boost_round=1000,
-                      early_stopping_rounds=100)
+    return lgb.train(params, trains, valid_sets=tests, num_boost_round=10000, early_stopping_rounds=100)
 
 
 def sgd_regression(df):
