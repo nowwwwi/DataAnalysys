@@ -1,7 +1,13 @@
-from sklearn.metrics import accuracy_score
+import pandas as pd
 
 
-def prediction(model, test_x, test_y):
-    pred_y = model.predict(test_x, num_iteration=model.best_iteration)
-    return pred_y, accuracy_score(test_y, pred_y)
+def predict(gbm_model):
+    df = pd.read_csv('data/prediction.csv')
+
+    destination_lis = df['destination']
+    prediction_lis = df.drop(['destination'], axis=1)
+    predict_results = pd.DataFrame(gbm_model.predict(prediction_lis), columns=['travel_time'])
+    df_result = pd.concat([destination_lis, pd.DataFrame(predict_results)], axis=1)
+
+    df_result.to_csv('data/result.csv')
 

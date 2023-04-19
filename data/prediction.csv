@@ -1,0 +1,2 @@
+destination,distance,is_express,is_superexpress,is_bus,is_airplane
+sapporo,963.4,False,True,False,False
