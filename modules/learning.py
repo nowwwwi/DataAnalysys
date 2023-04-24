@@ -21,7 +21,10 @@ def lgb_regression(df: pd.DataFrame):
         'num_leaves': 31
     }
 
-    return lgb.train(params, trains, valid_sets=tests, num_boost_round=10000, early_stopping_rounds=100)
+    model = lgb.train(params, trains, valid_sets=tests, num_boost_round=10000, early_stopping_rounds=1000)
+    model.save_model('data/model.txt', num_iteration=model.best_iteration)
+
+    return model
 
 
 def standardization(x_train, x_test):

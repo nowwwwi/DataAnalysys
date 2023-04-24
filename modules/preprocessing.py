@@ -28,6 +28,16 @@ def get_distance(route_data: BeautifulSoup) -> float:
     return float(dist.replace('km', ''))
 
 
+def get_pass_stations(route_data: BeautifulSoup) -> int:
+    stations = 0
+
+    for span in route_data.find_all('span', {'class': 'btnStopNum'}):
+        s = span.get_text().split('<!-- -->')[0]
+        stations += int(s.replace('駅', ''))
+
+    return stations
+
+
 def get_transport_info(destination: str):
     url = 'https://transit.yahoo.co.jp/search/result?from=東京&to=' \
           + destination \
@@ -38,6 +48,12 @@ def get_transport_info(destination: str):
     route_data = data.find(id='route01')
     detail = route_data.find('div', attrs={'class': 'routeDetail'}).text
 
+    pass_stations = 0
+
+    for span in route_data.find_all('span', {'class': 'btnStopNum'}):
+        num_str = span.get_text().split('<!-- -->')[0].replace('駅', '')
+        pass_stations += int(num_str)
+
     return {
         'distance': get_distance(route_data),
         'travel_time': get_travel_time(route_data),
@@ -45,7 +61,8 @@ def get_transport_info(destination: str):
         'is_superexpress': "新幹線" in detail,
         'is_bus': any(x in detail for x in ['bus', 'highWaybus']),
         'is_airplane': "air" in detail,
-        'transfer_times': int(re.findall(r'\d+', route_data.find('li', attrs={'class': 'transfer'}).text)[0])
+        'transfer_times': int(re.findall(r'\d+', route_data.find('li', attrs={'class': 'transfer'}).text)[0]),
+        'pass_stations': pass_stations
     }
 
 
@@ -60,7 +77,8 @@ def process_destination(destination: str):
             'is_superexpress': None,
             'is_bus': None,
             'is_airplane': None,
-            'transfer_times': None
+            'transfer_times': None,
+            'pass_stations': None
         }
 
 
@@ -89,7 +107,9 @@ def clean_and_save_dataframe(df: pd.DataFrame):
         'is_superexpress': bool,
         'is_bus': bool,
         'is_airplane': bool,
-        'transfer_times': int})
+        'transfer_times': int,
+        'pass_stations': int
+    })
 
     df.to_csv('data/cleansed_data.csv')
 

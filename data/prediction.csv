@@ -1,2 +1,2 @@
-destination,distance,is_express,is_superexpress,is_bus,is_airplane,transfer_time
-sapporo,963.4,0		,1,0,0,0
+destination,distance,is_express,is_superexpress,is_bus,is_airplane,transfer_time,pass_stations
+sapporo,963.4,False,True,False,False,0,10
