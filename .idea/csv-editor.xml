@@ -17,13 +17,6 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\data\corr.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
         <entry key="\data\prediction.csv">
           <value>
             <Attribute>

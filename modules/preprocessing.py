@@ -116,8 +116,15 @@ def clean_and_save_dataframe(df: pd.DataFrame):
     return df
 
 
-def preprocess():
-    temp_df = get_and_save_dataframe()
+def main(processing_type: str) -> pd.DataFrame:
+    if processing_type == 's':
+        temp_df = get_and_save_dataframe()
+    elif processing_type == 'r':
+        temp_df = pd.read_csv('data/temp_data.csv')
+    else:
+        raise ValueError('Invalid value.')
+
     cleansed_df = clean_and_save_dataframe(temp_df)
 
     return cleansed_df
+

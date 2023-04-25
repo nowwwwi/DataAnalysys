@@ -1,20 +1,16 @@
-from modules import preprocessing, making_figures, learning, predicting
-import pandas as pd
-import lightgbm as lgb
+from modules import preprocessing, learning, predicting
 
 
 def main():
-    print('Start processing...')
+    processing_type = input('データのスクレイピング:s, csvファイルからデータ読み込み:r : ')
 
-    processing_type = int(input('Input any key if you have already processed data, or 1 if you want to start from data processing:'))
-    df = preprocessing.preprocess() if processing_type == 1 else preprocessing.clean_and_save_dataframe(pd.read_csv('data/temp_data.csv'))
+    df = preprocessing.main(processing_type)
 
-    processing_type = int(input('Enter 0 to load a trained model or 1 to start with training data: '))
-    model = lgb.Booster(model_file='models/model.txt') if processing_type == 1 else learning.lgb_regression(df)
+    processing_type = input('モデル作成:c, txtファイルからモデル読み込み:r : ')
 
-    predicting.predict(model)
+    lgb_model = learning.main(processing_type, df)
 
-    print('Finish.')
+    predicting.predict(lgb_model)
 
 
 if __name__ == '__main__':

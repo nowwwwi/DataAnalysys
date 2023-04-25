@@ -1,2 +1,3 @@
 destination,distance,is_express,is_superexpress,is_bus,is_airplane,transfer_time,pass_stations
-sapporo,963.4,False,True,False,False,0,10
+sapporo,963.4,False,True,False,False,0,11
+tsuruga,491.8,False,True,False,False,0,6

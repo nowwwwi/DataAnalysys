@@ -22,7 +22,6 @@ def lgb_regression(df: pd.DataFrame):
     }
 
     model = lgb.train(params, trains, valid_sets=tests, num_boost_round=10000, early_stopping_rounds=1000)
-    model.save_model('models/model.txt', num_iteration=model.best_iteration)
 
     return model
 
@@ -32,3 +31,15 @@ def standardization(x_train, x_test):
     sc.fit(x_train)
 
     return sc.transform(x_train), sc.transform(x_test)
+
+
+def main(processing_type: str, df: pd.DataFrame):
+    if processing_type == 'c':
+        model = lgb_regression(df)
+        model.save_model('models/model.txt', num_iteration=model.best_iteration)
+    elif processing_type == 'r':
+        model = lgb.Booster(model_file='models/model.txt')
+    else:
+        raise ValueError('Invalid value.')
+
+    return model
