@@ -1,17 +1,16 @@
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
-def make_scatter(df, title: str, x_axis: str, x_axis_name: str, y_axis: str, y_axis_name: str):
-    x, y = df[x_axis], df[y_axis]
+def make_scatter(df: pd.DataFrame):
+    x, y = df['distance'], df['travel_time']
 
     plt.scatter(x, y, s=3)
 
-    plt.title(title)
-    plt.xlabel(x_axis_name)
-    plt.ylabel(y_axis_name)
+    plt.title('Time and Distance Relationships(Tokyo-Destination)')
+    plt.xlabel('Distance[km]')
+    plt.ylabel('Time[minute]')
     plt.axvline(x=517.2, color='r')
     plt.axhline(y=163, color='r')
 
     plt.savefig('figures/scatter.png')
-
-

@@ -1,12 +1,10 @@
 import lightgbm as lgb
+import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import SGDRegressor
-import matplotlib.pyplot as plt
-from sklearn.metrics import mean_absolute_error
 
 
-def lgb_regression(df):
+def lgb_regression(df: pd.DataFrame):
     df_train, df_test = train_test_split(df, test_size=0.3)
 
     col = 'travel_time'
@@ -23,17 +21,10 @@ def lgb_regression(df):
         'num_leaves': 31
     }
 
-    return lgb.train(params, trains, valid_sets=tests, num_boost_round=10000, early_stopping_rounds=100)
+    model = lgb.train(params, trains, valid_sets=tests, num_boost_round=10000, early_stopping_rounds=1000)
+    model.save_model('models/model.txt', num_iteration=model.best_iteration)
 
-
-def sgd_regression(df):
-    X_train, X_test, y_train, y_test = train_test_split(df.drop('distance', axis=1), df['distance'], test_size=0.2, random_state=42)
-    X_train, X_test = standardization(X_train, X_test)
-
-    sgd_reg = SGDRegressor(max_iter=1000, tol=1e-3, penalty=None, eta0=0.1, random_state=42)
-    sgd_reg.fit(X_train, y_train)
-
-    return sgd_reg
+    return model
 
 
 def standardization(x_train, x_test):
